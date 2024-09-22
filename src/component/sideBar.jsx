@@ -19,7 +19,7 @@ const SideBar = ({ user, setUser, contact, activeItem, setActiveItem }) => {
     try {
       localStorage.removeItem('user');
       setUser(null);
-      navigate('/login');
+      window.location.reload(); // Reload the page
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -88,3 +88,4 @@ const SideBar = ({ user, setUser, contact, activeItem, setActiveItem }) => {
 };
 
 export default SideBar;
+
