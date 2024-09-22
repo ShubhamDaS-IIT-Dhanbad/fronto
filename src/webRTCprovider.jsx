@@ -1,15 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useSocket } from './socketProvider.jsx'; // Import the global socket from SocketProvider
+import { useSocket } from './socketProvider.jsx';
 
 const WebRTCContext = createContext();
 
 export const useWebRTC = () => useContext(WebRTCContext);
 
 const WebRTCProvider = ({ children }) => {
-  const socket = useSocket(); // Access the globally available socket
+  const socket = useSocket();
   const [localStream, setLocalStream] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
   const [caller, setCaller] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const initializeWebRTC = async () => {
@@ -17,6 +18,12 @@ const WebRTCProvider = ({ children }) => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
         setLocalStream(stream);
 
+        // Handle incoming messages
+        socket.on('receive-message', (message) => {
+          setMessages((prevMessages) => [...prevMessages, message]);
+        });
+
+        // Other socket listeners (icecandidate, offer, answer, etc.)
         socket.on("icecandidate", async (candidate) => {
           if (peerConnection) {
             await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
@@ -25,13 +32,10 @@ const WebRTCProvider = ({ children }) => {
 
         socket.on("offer", async ({ fromSocketId, offer }) => {
           console.log("Offer received from:", fromSocketId);
-          const pc = new RTCPeerConnection({
-            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-          });
+          const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
           setPeerConnection(pc);
 
           stream.getTracks().forEach(track => pc.addTrack(track, stream));
-
           pc.ontrack = (event) => {
             const remoteVideo = document.getElementById("remoteVideo");
             remoteVideo.srcObject = event.streams[0];
@@ -56,9 +60,7 @@ const WebRTCProvider = ({ children }) => {
           }
         });
 
-        socket.on("end-call", () => {
-          endCall();
-        });
+        socket.on("end-call", endCall);
 
       } catch (error) {
         console.error("Error initializing WebRTC:", error);
@@ -72,18 +74,14 @@ const WebRTCProvider = ({ children }) => {
         peerConnection.close();
       }
     };
-  }, [peerConnection, socket]); // Add socket to the dependencies array
+  }, [peerConnection, socket]);
 
   const startCall = async (recipientSocketId) => {
-    console.log("Starting call with:", recipientSocketId,"koko");
     if (localStream) {
-      const pc = new RTCPeerConnection({
-        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-      });
+      const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
       setPeerConnection(pc);
 
       localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-
       pc.ontrack = (event) => {
         const remoteVideo = document.getElementById("remoteVideo");
         remoteVideo.srcObject = event.streams[0];
@@ -106,11 +104,19 @@ const WebRTCProvider = ({ children }) => {
     if (peerConnection) {
       peerConnection.close();
       setPeerConnection(null);
+      setCaller(null);
     }
   };
 
+  const sendMessageInGroup = (groupId, messageContent, senderSocketId) => {
+    const message = { groupId, messageContent, senderSocketId };
+    socket.emit('send-message-group', message);
+    // Update local message state
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
+
   return (
-    <WebRTCContext.Provider value={{ startCall, endCall, caller }}>
+    <WebRTCContext.Provider value={{ startCall, endCall, caller, sendMessageInGroup, messages }}>
       {children}
     </WebRTCContext.Provider>
   );

@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useWebRTC } from '../webRTCprovider.jsx'; // Import WebRTC context
+// import { useSocket } from '../socketProvider.jsx';
 import axios from 'axios';
 import { BASE_URL } from '../../public/constant';
-import TextChats from './textChats';
+import TextChats from './TextChats';
 import google from '../assets/google.png';
 import { HiMiniMicrophone } from "react-icons/hi2";
 import { BsSend } from "react-icons/bs";
 import { MdOutlineAddLocationAlt } from "react-icons/md";
 import { TbPhotoSearch } from "react-icons/tb";
 import { BsEmojiSmile } from "react-icons/bs";
-import { CiVideoOn } from "react-icons/ci";
 
 import '../style/chat.css';
 
-
-function Chat({ user, socket, whom, setWhom }) {
-  const { startCall, endCall } = useWebRTC(); // Use WebRTC context
+function Chat({ user, whom, setWhom }) {
+  // const socket = useSocket();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
   // Load chat history for the selected contact
   useEffect(() => {
     if (whom) {
+      // Load messages from local storage
       try {
         const storedMessages = JSON.parse(localStorage.getItem(`messages_${whom._id}`)) || [];
         setMessages(storedMessages);
@@ -31,7 +30,7 @@ function Chat({ user, socket, whom, setWhom }) {
         setMessages([]);
       }
 
-      const fetchMessage = async () => {
+      const fetchMessages = async () => {
         try {
           const response = await axios.get(`${BASE_URL}/api/get?user1=${user._id}&user2=${whom._id}`);
           const fetchedMessages = response.data.chat.chat.map((chat) => ({
@@ -49,8 +48,8 @@ function Chat({ user, socket, whom, setWhom }) {
       };
 
       // Fetch messages initially and then every second
-      fetchMessage();
-      const intervalId = setInterval(fetchMessage, 1000); // Fetch every second
+      fetchMessages();
+      const intervalId = setInterval(fetchMessages, 1000); // Fetch every second
 
       return () => clearInterval(intervalId); // Clear interval on unmount
     }
@@ -68,12 +67,12 @@ function Chat({ user, socket, whom, setWhom }) {
       }
     };
 
-    socket.on('receive-message', handleMessageReceive);
+    // socket.on('receive-message', handleMessageReceive);
 
-    return () => {
-      socket.off('receive-message', handleMessageReceive);
-    };
-  }, [whom, socket]);
+    // return () => {
+    //   socket.off('receive-message', handleMessageReceive);
+    // };
+  }, [whom]);
 
   // Send a message and store it in local storage
   const handleMessageSend = async () => {
@@ -104,12 +103,6 @@ function Chat({ user, socket, whom, setWhom }) {
     }
   };
 
-  const initiateCall = () => {
-    if (whom) {
-      startCall(whom.socketId);
-    }
-  };
-
   return (
     <>
       {whom ? (
@@ -121,9 +114,6 @@ function Chat({ user, socket, whom, setWhom }) {
                 <p id='chat-component-name-p'>{whom.firstName}</p>
                 <p id='chat-component-name-typing'>{whom.userName}</p>
               </div>
-            </div>
-            <div id='chat-header-icons'>
-              <CiVideoOn size={40} style={{color:'blue'}} onClick={initiateCall}/>
             </div>
           </div>
 

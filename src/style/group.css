@@ -1,0 +1,127 @@
+.group-container {
+    display: flex;
+    height: 100vh;
+}
+
+.group-sidebar {
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+}
+
+.group-sidebar h2,
+.group-sidebar h3 {
+    margin: 0 0 10px 0;
+}
+
+.group-sidebar input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.group-sidebar button {
+    width: 100%;
+}
+
+.group-chat {
+    flex: 2;
+    padding: 20px;
+}
+
+.chat-window {
+    border: 1px solid #ccc;
+    height: 300px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.chat-message {
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.chat-message.user {
+    text-align: right;
+    background-color: #d4edda;
+}
+
+.chat-message.other {
+    text-align: left;
+    background-color: #cce5ff;
+}
+
+.message-input {
+    width: calc(100% - 100px);
+    margin-right: 10px;
+}
+.group-sidebar-yourgroup{
+    background-color: rgb(88, 127, 212);
+    padding: 10px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border-radius: 6px;
+}
+.group-sidebar-yourgroup-groups{
+    background-color: #cce5ff;
+    padding: 10px;border-radius: 6px;
+    font-weight: 900;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.group-sidebar-yourgroup{
+    background-color: rgb(88, 127, 212);
+    padding: 10px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border-radius: 6px;
+}
+.group-sidebar-yourgroup-groups{
+    background-color: #cce5ff;
+    padding: 10px;border-radius: 6px;
+    font-weight: 900;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+
+.group-sidebar-creategroup{
+    background-color: rgb(133, 116, 229);
+    padding: 10px;margin-top: 20px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border-radius: 6px;
+}
+
+.group-sidebar-creategroup button{
+    outline: none;border: none;
+    height: 38px;border-radius: 7px;
+    background-color: rgb(34, 34, 39);
+    color: white;
+}
+
+
+
+.group-sidebar-searchgroup{
+    background-color: rgb(88, 212, 119);
+    padding: 10px;margin-top: 20px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border-radius: 6px;
+}
+.group-sidebar-searchgroup input{
+    
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+
+.group-sidebar-resultgroup{
+    background-color: rgb(127, 225, 179);
+    padding: 10px;margin-top: 20px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border-radius: 6px;
+}
+
+.message-button {
+    width: calc(100% - 100px);
+    margin-right: 10px;
+    margin-top: 10px;outline: none;
+    border:1px solid black;
+    padding: 5px;background-color: #cce5ff;
+}

@@ -7,6 +7,7 @@ import { FaPaperPlane } from "react-icons/fa";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { IoCallOutline, IoSettingsOutline, IoNotificationsOutline } from "react-icons/io5";
 import { TbMessageDots } from "react-icons/tb";
+import { CiCloudRainbow } from "react-icons/ci";
 
 import { BASE_URL } from '../../public/constant.js';
 import avatar from '../assets/google.png';
@@ -16,20 +17,6 @@ const SideBar = ({ user, setUser, contact, activeItem, setActiveItem }) => {
 
   const logOut = async () => {
     try {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-
-      if (storedUser) {
-        console.log(storedUser.uid);
-        await axios.post(`${BASE_URL}/api/updateOnline?uid=${user.uid}`);
-        console.log("User status updated on logout");
-      }
-
-      // Clear messages from localStorage
-      // contact.forEach((who) => {
-      //   localStorage.removeItem(`messages_${who._id}`);
-      // });
-
-      // Clear user data and redirect to login
       localStorage.removeItem('user');
       setUser(null);
       navigate('/login');
@@ -45,26 +32,34 @@ const SideBar = ({ user, setUser, contact, activeItem, setActiveItem }) => {
         <p>SwiftChat</p>
       </div>
       <div id='sidebar-icons'>
-        <div
+        {/* <div
           className={`sidebar-icons-divs ${activeItem === "Dashboard" ? "active" : ""}`}
           onClick={() => setActiveItem("Dashboard")}
         >
           <TbLayoutDashboard className='sidebar-icons-divs-icon' />
           Dashboard
-        </div>
-        <div
+        </div> */}
+        {/* <div
           className={`sidebar-icons-divs ${activeItem === "Calls" ? "active" : ""}`}
           onClick={() => setActiveItem("Calls")}
         >
           <IoCallOutline className='sidebar-icons-divs-icon' />
           Calls
-        </div>
+        </div> */}
         <div
           className={`sidebar-icons-divs ${activeItem === "Messages" ? "active" : ""}`}
           onClick={() => setActiveItem("Messages")}
         >
           <TbMessageDots className='sidebar-icons-divs-icon' />
           Messages
+        </div>
+        
+        <div
+          className={`sidebar-icons-divs ${activeItem === "Group" ? "active" : ""}`}
+          onClick={() => setActiveItem("Group")}
+        >
+          <IoSettingsOutline className='sidebar-icons-divs-icon' />
+          Groups
         </div>
         <div
           className={`sidebar-icons-divs ${activeItem === "Notification" ? "active" : ""}`}
@@ -74,11 +69,11 @@ const SideBar = ({ user, setUser, contact, activeItem, setActiveItem }) => {
           Notification
         </div>
         <div
-          className={`sidebar-icons-divs ${activeItem === "Settings" ? "active" : ""}`}
-          onClick={() => setActiveItem("Settings")}
+          className={`sidebar-icons-divs ${activeItem === "Aichatbot" ? "active" : ""}`}
+          onClick={() => setActiveItem("Aichatbot")}
         >
-          <IoSettingsOutline className='sidebar-icons-divs-icon' />
-          Settings
+          <CiCloudRainbow className='sidebar-icons-divs-icon' />
+          AI ChatBot
         </div>
       </div>
       <div className='sidebar-footer'>

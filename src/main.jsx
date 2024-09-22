@@ -11,9 +11,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <SocketProvider> 
-        <WebRTCProvider>
+      
           <App />
-        </WebRTCProvider>
       </SocketProvider>
     </BrowserRouter>
   </React.StrictMode>

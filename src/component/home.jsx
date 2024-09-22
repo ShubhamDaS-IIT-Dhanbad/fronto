@@ -6,15 +6,16 @@ import SideBar from './sideBar';
 import Message from './message';
 import Chat from './chat.jsx';
 import Notification from './notification.jsx';
+import Group from './group.jsx';
+import AiChatBot from './aiChatbot.jsx';
 
 import { BASE_URL } from '../../public/constant.js';
-import { useSocket } from '../socketProvider.jsx'; 
+import { useSocket } from '../socketProvider.jsx'; // Ensure correct socket import
 
 const Home = ({ user, setUser, contact, setContact }) => {
     const [whom, setWhom] = useState(null);
     const [activeItem, setActiveItem] = useState("Messages");
-    const socket = useSocket(); 
-
+    const socket = useSocket().socket;
     useEffect(() => {
         if (!user || !socket) return;
 
@@ -34,47 +35,45 @@ const Home = ({ user, setUser, contact, setContact }) => {
 
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/api/userdata?uid=${user.uid}&socketId=${socket.id}`);
+                const response = await axios.post(`${BASE_URL}/api/updatedata?uid=${user.uid}&socketId=${socket.id}`);
                 setUser(response.data);
+                console.log(response)
             } catch (error) {
                 console.error("Error fetching user data:", error);
             }
         };
 
         fetchUserData();
-        const intervalId = setInterval(fetchUserData, 1000);
-
-        return () => clearInterval(intervalId);
     }, [user?.uid, socket?.id, setUser]);
 
     return (
         <div id="home">
-            <SideBar 
-                user={user} 
-                setUser={setUser} 
-                socket={socket} 
-                contact={contact} 
-                setWhom={setWhom}  
-                activeItem={activeItem} 
-                setActiveItem={setActiveItem} 
+            <SideBar
+                user={user}
+                setUser={setUser}
+                socket={socket}
+                contact={contact}
+                setWhom={setWhom}
+                activeItem={activeItem}
+                setActiveItem={setActiveItem}
             />
             <div id="main-content">
                 {activeItem === "Messages" && (
                     <div id="message">
-                        <Message 
-                            user={user} 
-                            socket={socket} 
-                            whom={whom} 
-                            setWhom={setWhom} 
-                            contact={contact} 
-                            setContact={setContact} 
+                        <Message
+                            user={user}
+                            socket={socket}
+                            whom={whom}
+                            setWhom={setWhom}
+                            contact={contact}
+                            setContact={setContact}
                         />
-                        <Chat 
-                            user={user} 
-                            socket={socket} 
-                            whom={whom} 
-                            contact={contact} 
-                            setContact={setContact} 
+                        <Chat
+                            user={user}
+                            socket={socket}
+                            whom={whom}
+                            contact={contact}
+                            setContact={setContact}
                         />
                     </div>
                 )}
@@ -85,11 +84,17 @@ const Home = ({ user, setUser, contact, setContact }) => {
                     </div>
                 )}
 
-                {/* {activeItem === "Call" && (
-                    <div id="call">
-                        <Call user={user} socket={socket} whom={whom} />
+                {activeItem === "Group" && (
+                    <div id="group">
+                        <Group user={user} />
                     </div>
-                )} */}
+                )}
+
+                {activeItem === "Aichatbot" && (
+                    <div id="Aichatbot">
+                        <AiChatBot user={user} />
+                    </div>
+                )}
             </div>
         </div>
     );
