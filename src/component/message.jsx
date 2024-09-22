@@ -63,6 +63,7 @@ const Message = ({ user, whom, setWhom, contact, setContact}) => {
         try {
             const response = await axios.get(`${BASE_URL}/api/username?userName=${searchQuery}`);
             setSearchResults(response.data);
+            console.log("lp",response);
         } catch (error) {
             console.error("Error in searching users", error);
         }

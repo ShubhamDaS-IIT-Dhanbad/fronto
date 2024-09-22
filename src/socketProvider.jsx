@@ -13,7 +13,7 @@ const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         // Initialize socket connection
-        const newSocket = io(BASE_URL); // Adjust BASE_URL if necessary
+        const newSocket = io({BASE_URL}); // Adjust BASE_URL if necessary
         setSocket(newSocket);
 
         // Handle socket connection
@@ -33,13 +33,14 @@ const SocketProvider = ({ children }) => {
     }, []);
 
     // Function to send a message to a group
-    const sendMessageInGroup = (groupId, messageContent, senderSocketId) => {
-        const message = { groupId, messageContent, senderSocketId };
+    const sendMessageInGroup = (groupId, messageContent, senderSocketId,userId,senderName ) => {
+        const message = { groupId, messageContent, senderSocketId,userId,senderName  };
         if (socket) {
             socket.emit('send-message-group', message);
-
             // Update local message state
             setMessages((prevMessages) => [...prevMessages, message]);
+        } else {
+            console.error("Socket is not initialized");
         }
     };
 

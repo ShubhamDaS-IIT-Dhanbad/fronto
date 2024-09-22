@@ -109,7 +109,7 @@ const WebRTCProvider = ({ children }) => {
   };
 
   const sendMessageInGroup = (groupId, messageContent, senderSocketId) => {
-    const message = { groupId, messageContent, senderSocketId };
+    const message = { groupId, messageContent, senderSocketId};
     socket.emit('send-message-group', message);
     // Update local message state
     setMessages((prevMessages) => [...prevMessages, message]);

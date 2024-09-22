@@ -22,7 +22,9 @@ const Group = ({ user }) => {
         const fetchUserGroups = async () => {
             try {
                 const { data } = await axios.get(`${BASE_URL}/api/fetchgroup?userId=${user._id}`);
-                setUserGroups(data.groups);
+                
+                console.log(data)
+                setUserGroups(data);
             } catch (err) {
                 console.error("Error fetching user groups:", err);
             }
@@ -46,11 +48,12 @@ const Group = ({ user }) => {
         };
 
        
-        socket.on('received-message-from-group', ({messageContent} )=>{
+        socket.on('received-message-from-group', ({userId,senderName,messageContent} )=>{
+            console.log(userId,senderName,messageContent);
             console.log("message",messageContent)
             setChatMessages((prevMessages) => [
                 ...prevMessages,
-                { message: messageContent  }
+                {user:userId,userName:senderName, message: messageContent  }
             ]);
         });
 
@@ -66,8 +69,9 @@ const Group = ({ user }) => {
 
         if (query.trim()) {
             try {
-                const { data } = await axios.get(`${BASE_URL}/api/searchgroup?query=${query}&userId=${user._id}`);
-                setSearchResults(data.groups);
+                const { data } = await axios.get(`${BASE_URL}/api/searchgroup?query=${query}`);
+                console.log(data)
+                setSearchResults(data);
             } catch (err) {
                 console.error("Error searching groups:", err);
             }
@@ -81,7 +85,8 @@ const Group = ({ user }) => {
         if (newGroupName.trim()) {
             try {
                 const { data } = await axios.post(`${BASE_URL}/api/creategroup?userId=${user._id}&groupName=${newGroupName}`);
-                setUserGroups((prevGroups) => [...prevGroups, data.group]);
+                console.log(data);
+                setUserGroups((prevGroups) => [...prevGroups, data]);
                 setNewGroupName('');
             } catch (err) {
                 console.error("Error creating group:", err);
@@ -104,9 +109,10 @@ const Group = ({ user }) => {
         setSelectedGroup(groupId);
         try {
             const { data } = await axios.get(`${BASE_URL}/api/fetchgroupdetail?groupId=${groupId}`);
-            setGroupName(data.group.groupName);
+            console.log(data);
+            setGroupName(data.groupName);
             const usersWithNames = await Promise.all(
-                data.group.messages.map(async (msg) => {
+                data.messages.map(async (msg) => {
                     const userName = await fetchUserDataById(msg.user);
                     return { ...msg, userName };
                 })
@@ -130,7 +136,9 @@ const Group = ({ user }) => {
             };
 
             // Emit the message through the socket
-            sendMessageInGroup(selectedGroup, messageContent, socket.id);
+            console.log("here",user);
+            const senderName=user.firstName+" "+user.lastName;
+            sendMessageInGroup(selectedGroup, messageContent, socket.id,user._Id,senderName);
 
             const userName = await fetchUserDataById(user._id);
             setChatMessages((prevMessages) => [
@@ -139,8 +147,8 @@ const Group = ({ user }) => {
             ]);
 
             try {
-                // Optionally send it to the backend if needed
-                await axios.post(`${BASE_URL}/api/sendmessageingroup?groupId=${selectedGroup}&userId=${user._id}&messageContent=${messageContent}`);
+                console.log(selectedGroup,"ko",user._id,"lp",messageContent)
+                await axios.post(`${BASE_URL}/api/sendmessageingroup?groupId=${selectedGroup}&senderId=${user._id}&messageContent=${messageContent}`);
             } catch (err) {
                 console.error("Error sending message to backend:", err);
             }
@@ -157,11 +165,11 @@ const Group = ({ user }) => {
                     {userGroups.map(group => (
                         <div 
                             className="group-sidebar-yourgroup-groups" 
-                            key={group._id} 
-                            onClick={() => handleJoinGroup(group._id)} 
+                            key={group?._id} 
+                            onClick={() => handleJoinGroup(group?._id)} 
                             style={{ cursor: 'pointer' }}
                         >
-                            {group.groupName}
+                            {group?.groupName}
                         </div>
                     ))}
                 </div>
@@ -186,11 +194,11 @@ const Group = ({ user }) => {
                         placeholder="Search for a group"
                     />
                 </div>
-                {searchResults.length > 0 && (
+                {searchResults?.length > 0 && (
                     <div className='group-sidebar-resultgroup'>
                         <h3>SEARCH RESULT</h3>
                         <div>
-                            {searchResults.map(group => (
+                            {searchResults.map((group,key) => (
                                 <div 
                                     className="group-sidebar-yourgroup-groups" 
                                     key={group._id} 

@@ -66,12 +66,6 @@ function Chat({ user, whom, setWhom }) {
         });
       }
     };
-
-    // socket.on('receive-message', handleMessageReceive);
-
-    // return () => {
-    //   socket.off('receive-message', handleMessageReceive);
-    // };
   }, [whom]);
 
   // Send a message and store it in local storage

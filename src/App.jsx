@@ -5,6 +5,7 @@ import { useSocket } from './socketProvider.jsx'; // Access the socket through S
 import axios from 'axios'
 const Home = lazy(() => import('./component/home.jsx'));
 const Login = lazy(() => import('./component/login.jsx'));
+import { BASE_URL } from '../public/constant.js';
 
 const App = () => {
   const navigate = useNavigate();
@@ -17,23 +18,6 @@ const App = () => {
     if (localStorageUser) {
       const parsedUser = JSON.parse(localStorageUser);
       setUser(parsedUser);
-      console.log(parsedUser);
-      
-
-      const updateSocketId = async () => {
-        try {
-            await axios.post(`${BASE_URL}/api/updatedata`, {
-                uid: user.uid,
-                socketId: socket.id
-            });
-            console.log('Socket ID updated successfully', socket.id);
-        } catch (error) {
-            console.error('Error updating socket ID:', error);
-        }
-    };
-    updateSocketId();
-
-
       navigate('/');
     } else {
       navigate('/login');
