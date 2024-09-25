@@ -62,6 +62,7 @@ const Message = ({ user, whom, setWhom, contact, setContact}) => {
         if (searchQuery.trim() === "") return; // Avoid search with empty query
         try {
             const response = await axios.get(`${BASE_URL}/api/username?userName=${searchQuery}`);
+            console.log(response);
             setSearchResults(response.data);
             console.log("lp",response);
         } catch (error) {
